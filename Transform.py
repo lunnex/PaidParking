@@ -11,12 +11,14 @@ class Transform():
     
     def MorphologyTransform(self, image, settings):
         copyImage = image.copy()
-        #copyImage = cv2.GaussianBlur(copyImage, (3, 3), cv2.BORDER_CONSTANT)
+        if settings['medianBulr'] % 2 == 0:
+            settings['medianBulr'] = settings['medianBulr'] + 1
+        copyImage = cv2.GaussianBlur(copyImage, (settings['medianBulr'], settings['medianBulr']), cv2.BORDER_CONSTANT)
         copyImage = self.thresholding(copyImage, settings)
-        #copyImage = self.dilate(copyImage, settings)
-        #copyImage = self.erode(copyImage, settings)
+        copyImage = self.dilate(copyImage, settings)
+        copyImage = self.erode(copyImage, settings)
         #copyImage = cv2.erode(copyImage, np.ones((settings['erode'], settings['erode'])))
-        
+        cv2.imshow("0", copyImage)
         return copyImage
         #kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 1))
         #return cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel) 
@@ -26,9 +28,9 @@ class Transform():
     
     def thresholding(self, image, settings):
         #return cv2.threshold(image, settings['lowerTheresh'], settings['uppreThresh'], cv2.THRESH_BINARY)[1]
-        if settings['dilate'] % 2 == 0:
-            settings['dilate'] = settings['dilate'] + 1
-        return cv2.adaptiveThreshold(image,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,settings['dilate'],settings['erode'])
+        if settings['adaptiveThresholdBlock'] % 2 == 0:
+            settings['adaptiveThresholdBlock'] = settings['adaptiveThresholdBlock'] + 1
+        return cv2.adaptiveThreshold(image,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY,settings['adaptiveThresholdBlock'],settings['adaptiveThresholdConstant'])
     
     def deskew(self, image):
         coords = np.column_stack(np.where(image > 0))

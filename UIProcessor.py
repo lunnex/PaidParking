@@ -6,11 +6,13 @@ class UIProcessor:
         
     def UpdateSetting(self):
         settings = {
-            "uppreThresh": self.window.uppreThresh.value(),
+            "upperThresh": self.window.upperThresh.value(),
             "lowerTheresh": self.window.lowerTheresh.value(),
             "erode": self.window.erode.value(),
             "dilate": self.window.dilate.value(),
-            "medianBulr": self.window.medianBulr.value()  
+            "medianBulr": self.window.medianBulr.value(),  
+            "adaptiveThresholdBlock": self.window.adaptiveThresholdBlock.value(),
+            "adaptiveThresholdConstant": self.window.adaptiveThresholdConstant.value()  
         }
         
         with open('config.json', 'w') as outfile:
@@ -20,11 +22,13 @@ class UIProcessor:
         with open('config.json') as infile:
             settings = infile.read()
             templates = json.loads(settings)
-            self.window.uppreThresh.setValue(templates['uppreThresh'])
+            self.window.upperThresh.setValue(templates['upperThresh'])
             self.window.lowerTheresh.setValue(templates['lowerTheresh'])
             self.window.erode.setValue(templates['erode'])
             self.window.dilate.setValue(templates['dilate'])
             self.window.medianBulr.setValue(templates['medianBulr'])
+            self.window.adaptiveThresholdBlock.setValue(templates['adaptiveThresholdBlock'])
+            self.window.adaptiveThresholdConstant.setValue(templates['adaptiveThresholdConstant'])
             
     def GetValue(self):
         with open('config.json') as infile:
@@ -33,9 +37,11 @@ class UIProcessor:
         
     def GetCurrentValue(self):
         return {
-            "uppreThresh": self.window.uppreThresh.value(),
+            "upperThresh": self.window.upperThresh.value(),
             "lowerTheresh": self.window.lowerTheresh.value(),
             "erode": self.window.erode.value(),
             "dilate": self.window.dilate.value(),
-            "medianBulr": self.window.medianBulr.value()  
+            "medianBulr": self.window.medianBulr.value(),
+            "adaptiveThresholdBlock": self.window.adaptiveThresholdBlock.value(),
+            "adaptiveThresholdConstant": self.window.adaptiveThresholdConstant.value()  
         }

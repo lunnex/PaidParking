@@ -19,10 +19,11 @@ from UIProcessor import UIProcessor
 from Output import Output
 from Recognition import Recognition
 from Transform import Transform
+import keras
 
 ptsr.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 #image = Image.open(requests.get('https://a57.foxnews.com/media.foxbusiness.com/BrightCove/854081161001/201805/2879/931/524/854081161001_5782482890001_5782477388001-vs.jpg', stream=True).raw)
-image = Image.open('2.png')
+image = Image.open('248823.jpg')
 #image = image.resize((450,250))
 image = np.array(image)
 
@@ -41,6 +42,8 @@ class PicWindow(QtWidgets.QMainWindow):
     def SetPic(self, image):
         recognition = Recognition()
         image = recognition.GetLetters(image)
+        #recognition.ExtractLetters(image)
+        
         
         image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
         image = cv2.resize(image, [450, 100])
@@ -52,8 +55,11 @@ class PicWindow(QtWidgets.QMainWindow):
         
     def SetText(self, image):
         recognition = Recognition()
-        #texts = recognition.GetTexts(image)
-        #self.text.setText(recognition.GetTexts(image))
+        letters = recognition.ExtractLetters(image)
+        model_path = 'C:\\Users\\ilyak\\Desktop\\ViolatorRecognition\\emnist_letters.h5'
+        model = keras.models.load_model(model_path)
+        texts = recognition.GetText(model, letters)
+        self.text.setText(texts)
 
 def GetPic():
     output = Output()
@@ -77,8 +83,11 @@ def GetPic():
 def UpdatePic(picWin):
     picture = GetPic()
     picWin.SetPic(picture)
+    #picWin.SetText(picture)
+    
+def Recognize(picWin):
+    picture = GetPic()
     picWin.SetText(picture)
-
 
 
 app = QtWidgets.QApplication(sys.argv)
@@ -89,12 +98,16 @@ picwindow = PicWindow()
 ui = UIProcessor(window)
 ui.SetValue()
 window.saveButton.clicked.connect(ui.UpdateSetting)
+window.recognizeButton.clicked.connect(lambda: Recognize(picwindow))
 output = Output()
 
-window.uppreThresh.valueChanged.connect(lambda: UpdatePic(picwindow))
+window.upperThresh.valueChanged.connect(lambda: UpdatePic(picwindow))
 window.lowerTheresh.valueChanged.connect(lambda: UpdatePic(picwindow))
 window.erode.valueChanged.connect(lambda: UpdatePic(picwindow))
 window.dilate.valueChanged.connect(lambda: UpdatePic(picwindow))
+window.adaptiveThresholdBlock.valueChanged.connect(lambda: UpdatePic(picwindow))
+window.adaptiveThresholdConstant.valueChanged.connect(lambda: UpdatePic(picwindow))
+window.medianBulr.valueChanged.connect(lambda: UpdatePic(picwindow))
 
 settings = ui.GetValue()
 
@@ -113,8 +126,8 @@ texts = recognition.GetTexts(fragments)
 
 
 #image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
-autoDetectedImage = output.AddRectangles(image, pics, texts)
-output.ShowPic(autoDetectedImage)
+image = output.AddRectangles(image, pics, texts)
+output.ShowPic(image)
 #input()
 
 
@@ -126,4 +139,3 @@ picwindow.SetPic(fragments[0])
 picwindow.show()
 window.show()
 app.exec()
-

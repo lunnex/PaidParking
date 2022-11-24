@@ -1,1 +1,1 @@
-{"uppreThresh": 65, "lowerTheresh": 34, "erode": 0, "dilate": 28, "medianBulr": 9}
+{"upperThresh": 121, "lowerTheresh": 16, "erode": 1, "dilate": 1, "medianBulr": 1, "adaptiveThresholdBlock": 98, "adaptiveThresholdConstant": 36}
